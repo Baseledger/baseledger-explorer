@@ -35,10 +35,10 @@ Block Explorer for Baseledger by Unibright
 ## How to run The Big Dipper
 
 1. Copy `default_settings.json` to `settings.json`.
-2. Update the RPC and API URLs
-3. Update Bech32 address prefixes
-4. Add coins settings
-5. Update Ledger settings
+2. Update the RPC and API URLs, either to localhost addresse if you run Baseledger App locally ( API: http://0.0.0.0:1317 and RPC: http://0.0.0.0:26657) 
+3. Update Bech32 address prefixes, we currently use baseledger as prefix
+4. Add coins settings (reflect our defined STAKE and WORK token
+5. Update Ledger settings (N/A, we dont use that)
 
 ### Requirements
 
