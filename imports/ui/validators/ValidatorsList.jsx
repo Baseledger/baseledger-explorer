@@ -77,7 +77,7 @@ export default class Validators extends Component{
 
         return <div id="validator-list">
             <Helmet>
-                <title>{Meteor.settings.public.chainName} Validators List | Big Dipper</title>
+                <title>{Meteor.settings.public.chainName} Validators List | Baseledger</title>
                 <meta name="description" content="Here is a list of {Meteor.settings.public.chainName} Validators" />
             </Helmet>
             <Row>

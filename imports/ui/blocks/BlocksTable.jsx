@@ -80,7 +80,7 @@ export default class BlocksTable extends Component {
 
         return !this.props.homepage ? <div>
             <Helmet>
-                <title>Latest Blocks | Big Dipper</title>
+                <title>Latest Blocks | Baseledger</title>
                 <meta name="description" content="Latest blocks committed by validators" />
             </Helmet>
             <Row>

@@ -286,7 +286,7 @@ export default class Proposal extends Component{
 
                 return <div>
                     <Helmet>
-                        <title>{this.props.proposal.content.title} | Big Dipper</title>
+                        <title>{this.props.proposal.content.title} | Baseledger</title>
                         <meta name="description" content={this.props.proposal.content.description} />
                     </Helmet>
 

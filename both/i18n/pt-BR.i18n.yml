@@ -24,7 +24,7 @@ common:
     retry: 'Tentar novamente'
     rewards: 'Recompensas'
 navbar:
-    siteName: 'BIG DIPPER'
+    siteName: 'Baseledger'
     validators: 'Validadores'
     blocks: 'Blocos'
     transactions: 'Transações'

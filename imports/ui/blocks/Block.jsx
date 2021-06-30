@@ -52,7 +52,7 @@ export default class Block extends Component{
 
                 return <Container id="block">
                     <Helmet>
-                        <title>Block {numbro(block.height).format("0,0")} on {Meteor.settings.public.chainName} | Big Dipper</title>
+                        <title>Block {numbro(block.height).format("0,0")} on {Meteor.settings.public.chainName} | Baseledger</title>
                         <meta name="description" content={"Block details of height "+numbro(block.height).format("0,0")} />
                     </Helmet>
                     <h4><T>blocks.block</T> {numbro(block.height).format("0,0")}</h4>
