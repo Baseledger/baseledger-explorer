@@ -1,4 +1,4 @@
-$forbole-red: #bd081c;
+$forbole-red: #e04125;
 $primary: $forbole-red !default;
 
 @import "materia/variables";
@@ -79,7 +79,7 @@ body {
   }
   
   .ledger-sign-in .error-message, .ledger-modal .error-message {
-    color: red;
+    color: #e00025;
   }
 
   #header {
@@ -524,15 +524,15 @@ body {
    .account-dropdown{
     padding: 0 1rem 0 0.5rem;
     margin-top: -3px;
-    color: #bd081c;
+    color: #e04125;
     font-weight: bold;
     position:relative;
     z-index: 1;
     
 
     .dropdown-toggle{
-      background-color:#bd081c;
-      border: solid 0.05rem #bd081c;
+      background-color:#e04125;
+      border: solid 0.05rem #e04125;
 
     }
 
@@ -1015,7 +1015,7 @@ body {
   
   .ledger-modal-tab .tab-pane {
     .amount, .coin {
-      color: orangered;
+      color: #e08525;
       font-weight: 500;
     }
   
