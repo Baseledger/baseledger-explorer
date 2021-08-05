@@ -1,7 +1,8 @@
 {
     "public":{
-        "chainName": "BabyFace.Baseledger.net",
-        "chainId": "baseledgerBabyFace",
+        "chainName": "Baseledger",
+        "chainId": "baseledger",
+        "genesisTime": "2021-08-03T22:11:34.6681047Z",
         "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
         "uptimeWindow": 250,
@@ -29,9 +30,9 @@
         ],
         "ledger":{
             "coinType": 118,
-            "appName": "Cosmos",
+            "appName": "Baseledger",
             "appVersion": "2.16.0",
-            "gasPrice": 0.02
+            "gasPrice": 0
         },
         "modules": {
             "bank": true,
@@ -45,8 +46,8 @@
         "banners": false
     },
     "remote":{
-        "rpc":"http://0.0.0.0:26656",
-        "api":"http://0.0.0.0:1317"
+        "rpc":"http://localhost:26657",
+        "api":"http://localhost:1317"
     },
     "debug": {
         "startTimer": true
