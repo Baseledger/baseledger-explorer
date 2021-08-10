@@ -588,6 +588,7 @@ body {
     }
   
     &.transactions-list div.tx-info .activity {
+      width: 200px;
       overflow-x: auto;
   
       .card-body {
@@ -694,7 +695,6 @@ body {
   }
 
   .tx-list-homepage {
-    overflow-y: hidden;
     overflow-x: auto;
     height: 52em;
   }

@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Spinner } from 'reactstrap';
 import { TransactionRow } from './TransactionRow.jsx';
 import i18n from 'meteor/universe:i18n';
-import { VariableSizeList } from 'react-window';
 
-const PADDING_SIZE = 10;
 const T = i18n.createComponent();
 
 export default class Transactions extends Component{
@@ -35,14 +33,6 @@ export default class Transactions extends Component{
 
      getItemSize = index => (117 * (this.state.txs[index]?.props?.tx?.tx?.body?.messages.length))
 
-     TxRow = ({ index, style }) => (
-         <div style={{
-             ...style,
-             top: `${parseFloat(style.top) + PADDING_SIZE}px`
-         }}>{this.state.txs[index]}</div>
-
-     );
-
      render(){
          if (this.props.loading){
              return <Spinner type="grow" color="primary" />
@@ -59,15 +49,7 @@ export default class Transactions extends Component{
                      <Col xs={2} md={1} className="text-nowrap"><span className={this.state.homepage ? "ml-4" : null}><i className="material-icons">check_circle</i> <span className="d-none d-lg-inline-block"><T>transactions.valid</T></span></span></Col>
                      {!this.state.homepage ? <Col xs={12} lg={2}><i className="material-icons">monetization_on</i> <span className="d-none d-md-inline-block"><T>transactions.fee</T></span></Col> : null }
                  </Row>
-                 {this.state.txs ? 
-                     <VariableSizeList
-                         height={700}
-                         itemCount={this.props.transactionsCount}
-                         itemSize={this.getItemSize}
-                         width="100%"
-                     >
-                         {this.TxRow}
-                     </VariableSizeList> : ''}
+                 {this.state.txs}
              </div>
          }
      }
