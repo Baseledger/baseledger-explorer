@@ -36,11 +36,11 @@ export default class Transaction extends Component{
                         <title>Transaction {tx.txhash} on {Meteor.settings.public.chainName} | Baseledger</title>
                         <meta name="description" content={"Details of transaction "+tx.txhash} />
                     </Helmet>
-                    <h4><T>transactions.transaction</T> {(!tx.code)?<TxIcon valid />:<TxIcon />}</h4>
-                    {(tx.code)?<Row><Col xs={{size:12, order:"last"}} className="error">
+                    <h4><T>transactions.transaction</T> {(!tx.tx_response.code)?<TxIcon valid />:<TxIcon />}</h4>
+                    {(tx.tx_response.code)?<Row><Col xs={{size:12, order:"last"}} className="error">
                         <Alert color="danger">
                             <CosmosErrors
-                                code={tx.code}
+                                code={tx.tx_response.code}
                                 codespace={tx.codespace}
                                 log={tx.raw_log}
                             />
