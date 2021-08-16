@@ -190,6 +190,11 @@ export default class Header extends Component {
                         <NavItem>
                             <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
                         </NavItem>
+                        <NavItem>
+                            <NavLink href="https://baseledger.net" target="_blank" rel="noopener noreferrer">
+                                baseledger.net
+                            </NavLink>
+                        </NavItem >
                     </Nav>
                 </Collapse>
             </Navbar>

@@ -1,8 +1,9 @@
 {
     "public":{
         "chainName": "Baseledger",
+        "testNetName": "lakewood.baseledger.net",
         "chainId": "baseledger",
-        "genesisTime": "2021-08-03T22:11:34.6681047Z",
+        "genesisTime": "2021-08-16T15:19:32.0699615Z",
         "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
         "uptimeWindow": 250,
