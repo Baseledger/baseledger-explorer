@@ -8,8 +8,8 @@ export default ValidatorDetailsContainer = withTracker((props) => {
     let loading = true;
 
     if (Meteor.isClient){
-        transactionsHandle = Meteor.subscribe('transactions.list', props.limit);
-        loading = !transactionsHandle.ready();
+        transactionsHandle = Meteor.subscribe('transactions.list', 2200);
+        loading = !transactionsHandle.ready() && props.limit == Meteor.settings.public.initialPageSize;
 
         if (!loading) {
             transactions = Transactions.find({}, {sort:{height:-1}}).fetch();
@@ -26,5 +26,6 @@ export default ValidatorDetailsContainer = withTracker((props) => {
         loading,
         transactionsExist,
         transactions: transactionsExist ? transactions : {},
+        transactionsCount: transactionsExist ? transactions.length : 0
     };
 })(List);
