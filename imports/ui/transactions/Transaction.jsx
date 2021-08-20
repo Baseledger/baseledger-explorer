@@ -60,7 +60,7 @@ export default class Transaction extends Component{
                                 <Col md={4} className="label"><T>transactions.fee</T></Col>
                                 <Col md={8} className="value">{(tx.tx.auth_info.fee.amount.length > 0)?tx.tx.auth_info.fee.amount.map((fee,i) => {
                                     return <span className="text-nowrap" key={i}> {(new Coin(parseFloat(fee.amount), fee.denom)).toString(6)} </span>
-                                }):<span><T>transactions.noFee</T></span>}</Col>
+                                }):<span><T>1token</T></span>}</Col>
                                 <Col md={4} className="label"><T>transactions.gasUsedWanted</T></Col>
                                 <Col md={8} className="value">{numbro(tx.tx_response.gas_used).format("0,0")} / {numbro(tx.tx_response.gas_wanted).format("0,0")}</Col>
                                 <Col md={4} className="label"><T>transactions.memo</T></Col>

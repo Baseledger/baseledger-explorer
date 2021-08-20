@@ -132,7 +132,7 @@ transactions:
     txHash: 'Tx Hash'
     valid: 'Ważna'
     fee: 'Opłata'
-    noFee: 'Bezpłatnie'
+    noFee: '1token'
     gasUsedWanted: 'Gaz (użyty/ wymagany)'
     noTxFound: 'Nie znaleziono podanej transakcji.'
     noValidatorTxsFound: 'Nie znaleziono żadnej transakcji dla podanego Walidatora'
