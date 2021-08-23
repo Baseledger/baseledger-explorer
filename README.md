@@ -32,7 +32,7 @@ Block Explorer for Baseledger by Unibright
 
 [Sentinel](https://explorer.sentinel.co/)
 
-## How to run The Big Dipper
+## How to run 
 
 1. Copy `default_settings.json` to `settings.json`.
 2. Update the RPC and API URLs, either to localhost addresse if you run Baseledger App locally ( API: http://0.0.0.0:1317 and RPC: http://0.0.0.0:26657) 
