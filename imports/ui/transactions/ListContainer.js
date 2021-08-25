@@ -8,7 +8,7 @@ export default ValidatorDetailsContainer = withTracker((props) => {
     let loading = true;
 
     if (Meteor.isClient){
-        transactionsHandle = Meteor.subscribe('transactions.list', 2200);
+        transactionsHandle = Meteor.subscribe('transactions.list', props.limit);
         loading = !transactionsHandle.ready() && props.limit == Meteor.settings.public.initialPageSize;
 
         if (!loading) {
