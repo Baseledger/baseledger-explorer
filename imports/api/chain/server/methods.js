@@ -13,31 +13,30 @@ findVotingPower = (validator, genValidators) => {
 
 Meteor.methods({
     'chain.getConsensusState': function(){
-        // this.unblock();
-        // let url = RPC+'/dump_consensus_state';
-        // try{
-        //     let response = HTTP.get(url);
-        //     let consensus = JSON.parse(response.content);
-        //     consensus = consensus.result;
-        //     let height = consensus.round_state.height;
-        //     let round = consensus.round_state.round;
-        //     let step = consensus.round_state.step;
-        //     let votedPower = Math.round(parseFloat(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3])*100);
+        this.unblock();
+        let url = RPC+'/dump_consensus_state';
+        try{
+            let response = HTTP.get(url);
+            let consensus = JSON.parse(response.content).result;
+            let height = consensus.round_state.height;
+            let round = consensus.round_state.round;
+            let step = consensus.round_state.step;
+            let votedPower = Math.round(parseFloat(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3])*100);
 
-        //     Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
-        //         votingHeight: height,
-        //         votingRound: round,
-        //         votingStep: step,
-        //         votedPower: votedPower,
-        //         proposerAddress: consensus.round_state.validators.proposer.address,
-        //         prevotes: consensus.round_state.votes[round].prevotes,
-        //         precommits: consensus.round_state.votes[round].precommits
-        //     }});
-        // }
-        // catch(e){
-        //     console.log(url);
-        //     console.log(e);
-        // }
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
+                votingHeight: height,
+                votingRound: round,
+                votingStep: step,
+                votedPower: votedPower,
+                proposerAddress: consensus.round_state.validators.proposer.address,
+                prevotes: consensus.round_state.votes[round].prevotes,
+                precommits: consensus.round_state.votes[round].precommits
+            }});
+        }
+        catch(e){
+            console.log(url);
+            console.log(e);
+        }
     },
     'chain.updateStatus': async function(){
         this.unblock();
@@ -92,130 +91,130 @@ Meteor.methods({
             // }
 
             // Get chain states
-            // if (parseInt(chain.latestBlockHeight) > 0){
-            //     let chainStates = {};
-            //     chainStates.height = parseInt(chain.latestBlockHeight);
-            //     chainStates.time = new Date(chain.latestBlockTime);
+            if (parseInt(chain.latestBlockHeight) > 0){
+                let chainStates = {};
+                chainStates.height = parseInt(chain.latestBlockHeight);
+                chainStates.time = new Date(chain.latestBlockTime);
 
-            //     try{
-            //         url = API + '/staking/pool';
-            //         let response = HTTP.get(url);
-            //         let bonding = JSON.parse(response.content).pool;
-            //         chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
-            //         chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
-            //     }
-            //     catch(e){
-            //         console.log(e);
-            //     }
+                // try{
+                //     url = API + '/staking/pool';
+                //     let response = HTTP.get(url);
+                //     let bonding = JSON.parse(response.content).pool;
+                //     chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
+                //     chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
+                // }
+                // catch(e){
+                //     console.log(e);
+                // }
 
-            //     if ( Coin.StakingCoin.denom ) {
-            //         if (Meteor.settings.public.modules.bank){
-            //             try{
-            //                 url = API + '/bank/supply/' + Coin.StakingCoin.denom;
-            //                 let response = HTTP.get(url);
-            //                 let supply = JSON.parse(response.content);
-            //                 chainStates.totalSupply = parseInt(supply.amount.amount);
-            //             }
-            //             catch(e){
-            //                 console.log(e);
-            //             }
+                // if ( Coin.StakingCoin.denom ) {
+                //     if (Meteor.settings.public.modules.bank){
+                //         try{
+                //             url = API + '/bank/supply/' + Coin.StakingCoin.denom;
+                //             let response = HTTP.get(url);
+                //             let supply = JSON.parse(response.content);
+                //             chainStates.totalSupply = parseInt(supply.amount.amount);
+                //         }
+                //         catch(e){
+                //             console.log(e);
+                //         }
 
-            //             // update bank params
-            //             try {
-            //                 url = API + '/bank/params';
-            //                 response = HTTP.get(url);
-            //                 chain.bank = JSON.parse(response.content);
-            //             }
-            //             catch(e){
-            //                 console.log(e);
-            //             }
+                //         // update bank params
+                //         try {
+                //             url = API + '/bank/params';
+                //             response = HTTP.get(url);
+                //             chain.bank = JSON.parse(response.content);
+                //         }
+                //         catch(e){
+                //             console.log(e);
+                //         }
 
-            //         }
+                //     }
 
-            //         if (Meteor.settings.public.modules.distribution){
-            //             try {
-            //                 url = API + '/distribution/community_pool';
-            //                 let response = HTTP.get(url);
-            //                 let pool = JSON.parse(response.content).pool;
-            //                 if (pool && pool.length > 0){
-            //                     chainStates.communityPool = [];
-            //                     pool.forEach((amount) => {
-            //                         chainStates.communityPool.push({
-            //                             denom: amount.denom,
-            //                             amount: parseFloat(amount.amount)
-            //                         })
-            //                     })
-            //                 }
-            //             }
-            //             catch (e){
-            //                 console.log(e)
-            //             }
+                    // if (Meteor.settings.public.modules.distribution){
+                    //     try {
+                    //         url = API + '/distribution/community_pool';
+                    //         let response = HTTP.get(url);
+                    //         let pool = JSON.parse(response.content).pool;
+                    //         if (pool && pool.length > 0){
+                    //             chainStates.communityPool = [];
+                    //             pool.forEach((amount) => {
+                    //                 chainStates.communityPool.push({
+                    //                     denom: amount.denom,
+                    //                     amount: parseFloat(amount.amount)
+                    //                 })
+                    //             })
+                    //         }
+                    //     }
+                    //     catch (e){
+                    //         console.log(e)
+                    //     }
 
-            //             // update distribution params
-            //             try {
-            //                 url = API + '/distribution/params';
-            //                 response = HTTP.get(url);
-            //                 chain.distribution = JSON.parse(response.content);
-            //             }
-            //             catch(e){
-            //                 console.log(e);
-            //             }
-            //         }
+                    //     // update distribution params
+                    //     try {
+                    //         url = API + '/distribution/params';
+                    //         response = HTTP.get(url);
+                    //         chain.distribution = JSON.parse(response.content);
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
+                    // }
 
-            //         if (Meteor.settings.public.modules.minting){
-            //             try{
-            //                 url = API + '/mint/inflation';
-            //                 let response = HTTP.get(url);
-            //                 let inflation = JSON.parse(response.content).inflation;
-            //                 // response = HTTP.get(url);
-            //                 // let inflation = JSON.parse(response.content).result;
-            //                 if (inflation){
-            //                     chainStates.inflation = parseFloat(inflation)
-            //                 }
-            //             }
-            //             catch(e){
-            //                 console.log(e);
-            //             }
+                    // if (Meteor.settings.public.modules.minting){
+                    //     try{
+                    //         url = API + '/mint/inflation';
+                    //         let response = HTTP.get(url);
+                    //         let inflation = JSON.parse(response.content).inflation;
+                    //         // response = HTTP.get(url);
+                    //         // let inflation = JSON.parse(response.content).result;
+                    //         if (inflation){
+                    //             chainStates.inflation = parseFloat(inflation)
+                    //         }
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
 
-            //             try{
-            //                 url = API + '/mint/annual_provisions';
-            //                 let response = HTTP.get(url);
-            //                 let provisions = JSON.parse(response.content).annual_provisions;
-            //                 console.log(provisions)
-            //                 if (provisions){
-            //                     chainStates.annualProvisions = parseFloat(provisions)
-            //                 }
-            //             }
-            //             catch(e){
-            //                 console.log(e);
-            //             }
+                    //     try{
+                    //         url = API + '/mint/annual_provisions';
+                    //         let response = HTTP.get(url);
+                    //         let provisions = JSON.parse(response.content).annual_provisions;
+                    //         console.log(provisions)
+                    //         if (provisions){
+                    //             chainStates.annualProvisions = parseFloat(provisions)
+                    //         }
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
 
-            //             // update mint params
-            //             try {
-            //                 url = API + '/mint/params';
-            //                 response = HTTP.get(url);
-            //                 chain.mint = JSON.parse(response.content);
-            //             }
-            //             catch(e){
-            //                 console.log(e);
-            //             }
-            //         }
+                    //     // update mint params
+                    //     try {
+                    //         url = API + '/mint/params';
+                    //         response = HTTP.get(url);
+                    //         chain.mint = JSON.parse(response.content);
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
+                    // }
 
-            //         if (Meteor.settings.public.modules.gov){
-            //             // update gov params
-            //             try {
-            //                 url = API + '/gov/params/tallying';
-            //                 response = HTTP.get(url);
-            //                 chain.gov = JSON.parse(response.content);
-            //             }
-            //             catch(e){
-            //                 console.log(e);
-            //             }
-            //         }
-            //     }
+                    // if (Meteor.settings.public.modules.gov){
+                    //     // update gov params
+                    //     try {
+                    //         url = API + '/gov/params/tallying';
+                    //         response = HTTP.get(url);
+                    //         chain.gov = JSON.parse(response.content);
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
+                    // }
+                // }
 
-            //     ChainStates.insert(chainStates);
-            // }
+                ChainStates.insert(chainStates);
+            }
 
             Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
 

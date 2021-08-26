@@ -65,13 +65,13 @@ Meteor.methods({
 
         const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
 
+
         let lastKeybaseFetchTime = Date.parse(chainStatus?.lastKeybaseFetchTime) ?? 0
         console.log("Last fetch time: %o", lastKeybaseFetchTime)
 
         console.log('Fetching keybase...')
         // eslint-disable-next-line no-loop-func
         Validators.find({}).forEach(async (validator) => {
-
             try {
                 if (validator?.description && validator?.description?.identity) {
                     let profileUrl = getValidatorProfileUrl(validator?.description?.identity)

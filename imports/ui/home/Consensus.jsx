@@ -47,7 +47,7 @@ export default class Consensus extends Component{
         else{
             if (this.props.consensusExist && this.props.consensus.prevotes){
                 let proposer = this.props.consensus.proposer();
-                let moniker = proposer.description.moniker??this.props.consensus.proposerAddress;
+                let moniker = proposer.description?.moniker??this.props.consensus.proposerAddress;
                 let profileUrl = (proposer&&proposer.profile_url) || '';
                 let validator = Validators.findOne({ address: this.props.consensus.proposerAddress });
                 let validatorOperatorAddress = validator?.operator_address ?? this.props.consensus.proposerAddress;

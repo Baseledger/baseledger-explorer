@@ -162,7 +162,9 @@ calculateVPDist = async (analyticsData, blockData) => {
 Meteor.methods({
     'blocks.averageBlockTime'(address){
         this.unblock();
+        console.log("\nTHIS IS RUNNING\n")
         let blocks = Blockscon.find({proposerAddress:address}).fetch();
+        console.log("BLOCKS", blocks)
         let heights = blocks.map((block) => {
             return block.height;
         });
@@ -173,6 +175,7 @@ Meteor.methods({
         for (b in blocksStats){
             totalBlockDiff += blocksStats[b].timeDiff;
         }
+        console.log("AVERAGE BLOCK TIME >>>>>>", totalBlockDiff/heights.length)
         return totalBlockDiff/heights.length;
     },
     'blocks.getLatestHeight': function() {
@@ -223,7 +226,10 @@ Meteor.methods({
             try{
                 let response = HTTP.get(url);
                 let result = JSON.parse(response.content).result.validators;
-                result.forEach((validator) => validatorSet[validator.pub_key.value] = validator);
+                result.forEach((validator) => {
+                    validator.status = parseInt(validator.voting_power) > 0 ? 'BOND_STATUS_BONDED' : 'BOND_STATUS_UNBONDED'
+                    validatorSet[validator.pub_key.value] = validator
+                });
             }
             catch(e){
                 console.log(url);
