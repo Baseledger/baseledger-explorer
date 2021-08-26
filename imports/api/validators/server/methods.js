@@ -10,40 +10,40 @@ import { getValidatorProfileUrl } from '../../blocks/server/methods.js';
 
 Meteor.methods({
     'Validators.findCreateValidatorTime': function(address){
-        this.unblock();
-        // look up the create validator time to consider if the validator has never updated the commission
-        let tx = Transactions.findOne({$and:[
-            {"tx.body.messages.delegator_address":address},
-            {"tx.body.messages.@type":"/cosmos.staking.v1beta1.MsgCreateValidator"},
-            {"tx_response.code":0}
-        ]});
+        // this.unblock();
+        // // look up the create validator time to consider if the validator has never updated the commission
+        // let tx = Transactions.findOne({$and:[
+        //     {"tx.body.messages.delegator_address":address},
+        //     {"tx.body.messages.@type":"/cosmos.staking.v1beta1.MsgCreateValidator"},
+        //     {"tx_response.code":0}
+        // ]});
 
-        if (tx){
-            let block = Blockscon.findOne({height:tx.height});
-            if (block){
-                return block.time;
-            }
-        }
-        else{
-            // no such create validator tx
-            return false;
-        }
+        // if (tx){
+        //     let block = Blockscon.findOne({height:tx.height});
+        //     if (block){
+        //         return block.time;
+        //     }
+        // }
+        // else{
+        //     // no such create validator tx
+        //     return false;
+        // }
     },
     'Validators.getAllDelegations'(address){
-        this.unblock();
-        let url = `${API}/cosmos/staking/v1beta1/validators/${address}/delegations?pagination.limit=10&pagination.count_total=true`;
+        // this.unblock();
+        // let url = `${API}/validators/${address}/delegations?pagination.limit=10&pagination.count_total=true`;
 
-        try {
-            let delegations = HTTP.get(url);
-            if (delegations.statusCode == 200) {
-                let delegationsCount = JSON.parse(delegations.content)?.pagination?.total;
-                return delegationsCount;
-            };
-        }
-        catch (e) {
-            console.log(url);
-            console.log("Getting error: %o when getting delegations count from %o", e, url);
-        }
+        // try {
+        //     let delegations = HTTP.get(url);
+        //     if (delegations.statusCode == 200) {
+        //         let delegationsCount = JSON.parse(delegations.content)?.pagination?.total;
+        //         return delegationsCount;
+        //     };
+        // }
+        // catch (e) {
+        //     console.log(url);
+        //     console.log("Getting error: %o when getting delegations count from %o", e, url);
+        // }
     },
 
     'Validators.fetchKeybase'(address) {
@@ -55,13 +55,14 @@ Meteor.methods({
         let chainId;
         try {
             let response = HTTP.get(url);
-            let status = JSON.parse(response?.content);
-            chainId = (status?.result?.node_info?.network);
+            let status = JSON.parse(response.content).result;
+            chainId = (status.node_info.network);
         }
         catch (e) {
             console.log("Error getting chainId for keybase fetching")        
         }
-        let chainStatus = Chain.findOne({ chainId});
+        let chainStatus = Chain.findOne({ chainId });
+
         const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
 
         let lastKeybaseFetchTime = Date.parse(chainStatus?.lastKeybaseFetchTime) ?? 0
@@ -70,6 +71,7 @@ Meteor.methods({
         console.log('Fetching keybase...')
         // eslint-disable-next-line no-loop-func
         Validators.find({}).forEach(async (validator) => {
+
             try {
                 if (validator?.description && validator?.description?.identity) {
                     let profileUrl = getValidatorProfileUrl(validator?.description?.identity)

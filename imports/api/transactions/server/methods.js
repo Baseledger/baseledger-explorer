@@ -18,7 +18,7 @@ Meteor.methods({
             for (let i in transactions){
                 let url = "";
                 try {
-                    url = API+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
+                    url = API+ '/tx/txs/'+transactions[i].txhash;
                     let response = HTTP.get(url);
                     let tx = JSON.parse(response.content);
 
