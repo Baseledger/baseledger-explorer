@@ -47,7 +47,7 @@ export default class Block extends Component{
             if (this.props.blockExist){
                 let block = this.props.block;
                 let proposer = block.proposer();
-                let moniker = proposer?proposer.description.moniker:'';
+                let moniker = proposer.description?.moniker ?? proposer.address;
                 let profileUrl = proposer?proposer.profile_url:'';
 
                 return <Container id="block">
@@ -63,7 +63,7 @@ export default class Block extends Component{
                                 <Col md={4} className="label"><T>common.hash</T></Col>
                                 <Col md={8} className="value text-nowrap overflow-auto address">{block.hash}</Col>
                                 <Col md={4} className="label"><T>blocks.proposer</T></Col>
-                                <Col md={8} className="value"><Link to={"/validator/" + ((proposer) ? proposer.operator_address : this.props?.block?.proposerAddress)}><Avatar moniker={moniker} profileUrl={profileUrl} address={block?.proposerAddress} list={true} /> {moniker}</Link></Col>
+                                <Col md={8} className="value"><Link to={"/validator/" + ((proposer) ? proposer.address : this.props?.block?.proposerAddress)}><Avatar moniker={moniker} profileUrl={profileUrl} address={block?.proposerAddress} list={true} /> {moniker}</Link></Col>
                                 <Col md={4} className="label"><T>blocks.numOfTransactions</T></Col>
                                 <Col md={8} className="value">{numbro(block.transNum).format("0,0")}</Col>
                                 <Col md={4} className="label"><T>common.time</T></Col>
