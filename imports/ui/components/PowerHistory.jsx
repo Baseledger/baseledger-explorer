@@ -15,7 +15,7 @@ export default class PowerHistory extends React.Component {
             diff: <span className={"text-"+((props.votingPower - props.prevVotingPower>0)?"success":"danger")+" vp-diff"}>({numbro(props.votingPower - props.prevVotingPower).format("+0,0")})</span>
         }
 
-        if (props.votingPower > 0){      
+        if (props.votingPower > 0){
             Meteor.call('Transactions.findDelegation', this.props.address, this.props.height, (err, result) => {
                 if (err){
                 // console.log(err);

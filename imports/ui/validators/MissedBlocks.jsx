@@ -22,11 +22,11 @@ export default class MissedBlocks extends Component{
             if (this.props.validatorExist){
                 return <div>
                     <Helmet>
-                        <title>{ this.props.validator.description.moniker } - Missed Blocks | Baseledger</title>
-                        <meta name="description" content={"The missed blocks and precommits of "+this.props.validator.description.moniker} />
+                        <title>{ this.props.validator.description?.moniker ?? this.props.validator.address } - Missed Blocks | Baseledger</title>
+                        <meta name="description" content={"The missed blocks and precommits of "+this.props.validator.description?.moniker ?? this.props.validator.address} />
                     </Helmet>
                     <Link to={"/validator/"+this.props.validator.address} className="btn btn-link"><i className="fas fa-caret-left"></i> <T>validators.backToValidator</T></Link>
-                    <h2><T moniker={this.props.validator.description.moniker}>validators.missedBlocksTitle</T></h2>
+                    <h2><T moniker={this.props.validator.description?.moniker ?? this.props.validator.address}>validators.missedBlocksTitle</T></h2>
                     <Nav pills>
                         <NavItem>
                             <NavLink tag={Link} to={"/validator/"+this.props.validator.address+"/missed/blocks"} active={this.isVoter()}><T>validators.missedBlocks</T></NavLink>

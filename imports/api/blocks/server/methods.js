@@ -162,7 +162,6 @@ calculateVPDist = async (analyticsData, blockData) => {
 Meteor.methods({
     'blocks.averageBlockTime'(address){
         this.unblock();
-        console.log("\nTHIS IS RUNNING\n")
         let blocks = Blockscon.find({proposerAddress:address}).fetch();
         console.log("BLOCKS", blocks)
         let heights = blocks.map((block) => {
@@ -175,7 +174,6 @@ Meteor.methods({
         for (b in blocksStats){
             totalBlockDiff += blocksStats[b].timeDiff;
         }
-        console.log("AVERAGE BLOCK TIME >>>>>>", totalBlockDiff/heights.length)
         return totalBlockDiff/heights.length;
     },
     'blocks.getLatestHeight': function() {
@@ -476,8 +474,6 @@ Meteor.methods({
 
                         let valExist = Validators.findOne({"pub_key.value":v});
 
-                        // console.log(valData);
-
                         // console.log("===== voting power ======: %o", valData)
                         analyticsData.voting_power += valData.voting_power
 
@@ -604,22 +600,22 @@ Meteor.methods({
                         if ((height == curr+1) || (height == Meteor.settings.params.startHeight+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
                             if ((height == Meteor.settings.params.startHeight+1) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){    
                                 if (valData.status == 'BOND_STATUS_BONDED'){
-                                    url = `${API}/validators/${valData.operator_address}/delegations/${valData.delegator_address}`
-                                    try{
-                                        console.log("Getting self delegation");
+                                    // url = `${API}/validators/${valData.operator_address}/delegations/${valData.delegator_address}`
+                                    // try{
+                                    //     console.log("Getting self delegation");
         
-                                        let response = HTTP.get(url);
-                                        let selfDelegation = JSON.parse(response.content).delegation_response;
+                                    //     let response = HTTP.get(url);
+                                    //     let selfDelegation = JSON.parse(response.content).delegation_response;
         
-                                        valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
+                                    //     valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
         
-                                    }
-                                    catch(e){
-                                        console.log(url);
-                                        console.log("Getting self delegation: %o", e);
-                                        valData.self_delegation = 0;
+                                    // }
+                                    // catch(e){
+                                    //     console.log(url);
+                                    //     console.log("Getting self delegation: %o", e);
+                                    //     valData.self_delegation = 0;
                                             
-                                    }
+                                    // }
                                 }
                             }
 
@@ -636,8 +632,6 @@ Meteor.methods({
                         console.log("Update validator uptime.")
                         getValidatorUptime(validatorSet)
                     }
-
-
 
                     let endFindValidatorsNameTime = new Date();
                     console.log("Get validators name time: "+((endFindValidatorsNameTime-startFindValidatorsNameTime)/1000)+"seconds.");
