@@ -207,14 +207,15 @@ export default class Validator extends Component{
                             <div className="website"></div>
                         </Card>
                         <Card>
-                            <div className="card-header"><T>validators.uptime</T> <Link className="float-right" to={"/validator/"+this.props.validator.address+"/missed/blocks"}><T>common.more</T>...</Link></div>
+                            <div className="card-header"><T>validators.uptime</T></div>
                             <SentryBoundary>
                                 <CardBody>
-                                    <Row>
+                                    <div className='moniker flip-clock-wrapper'>--</div>
+                                    {/* <Row>
                                         <Col xs={8} className="label"><T numBlocks={Meteor.settings.public.slashingWindow}>validators.lastNumBlocks</T></Col>
                                         <Col xs={4} className="value text-right">{this.props.validator.uptime?'this.props.validator.uptime%':'--'}</Col>
                                         <Col md={12} className="blocks-list">{this.state.records}</Col>
-                                    </Row>
+                                    </Row> */}
                                 </CardBody>
                             </SentryBoundary>
                         </Card>
