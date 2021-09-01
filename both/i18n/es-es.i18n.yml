@@ -23,7 +23,7 @@ common:
     cancel: 'Cancelar'
     retry: 'Reintentar'
 navbar:
-    siteName: 'BIG DIPPER'
+    siteName: 'Baseledger'
     validators: 'Validadores'
     blocks: 'Bloques'
     transactions: 'Transacciones'
@@ -131,7 +131,7 @@ transactions:
     txHash: 'Tx Hash'
     valid: 'Validez'
     fee: 'Comisión'
-    noFee: 'No fee'
+    noFee: '1token'
     gasUsedWanted: 'Gas (usado / deseado)'
     noTxFound: 'No se encontró ninguna transacción de este tipo.'
     noValidatorTxsFound: 'No se encontró ninguna transaccion relacionada con este validador.'

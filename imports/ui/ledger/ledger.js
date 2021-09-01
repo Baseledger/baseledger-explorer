@@ -17,7 +17,7 @@ const INTERACTION_TIMEOUT = 10000
 const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersion || "2.16.0";
 const DEFAULT_DENOM = Meteor.settings.public.bondDenom || 'uatom';
 export const DEFAULT_GAS_PRICE = parseFloat(Meteor.settings.public.ledger.gasPrice) || 0.025;
-export const DEFAULT_MEMO = 'Sent via Big Dipper'
+export const DEFAULT_MEMO = 'Sent via Baseledger'
 
 /*
 HD wallet derivation path (BIP44)

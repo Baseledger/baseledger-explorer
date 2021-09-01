@@ -33,14 +33,14 @@ export default class Transaction extends Component{
                 let tx = this.props.transaction;
                 return <Container id="transaction">
                     <Helmet>
-                        <title>Transaction {tx.txhash} on {Meteor.settings.public.chainName} | Big Dipper</title>
+                        <title>Transaction {tx.txhash} on {Meteor.settings.public.chainName} | Baseledger</title>
                         <meta name="description" content={"Details of transaction "+tx.txhash} />
                     </Helmet>
-                    <h4><T>transactions.transaction</T> {(!tx.code)?<TxIcon valid />:<TxIcon />}</h4>
-                    {(tx.code)?<Row><Col xs={{size:12, order:"last"}} className="error">
+                    <h4><T>transactions.transaction</T> {(!tx.tx_response.code)?<TxIcon valid />:<TxIcon />}</h4>
+                    {(tx.tx_response.code)?<Row><Col xs={{size:12, order:"last"}} className="error">
                         <Alert color="danger">
                             <CosmosErrors
-                                code={tx.code}
+                                code={tx.tx_response.code}
                                 codespace={tx.codespace}
                                 log={tx.raw_log}
                             />
@@ -60,7 +60,7 @@ export default class Transaction extends Component{
                                 <Col md={4} className="label"><T>transactions.fee</T></Col>
                                 <Col md={8} className="value">{(tx.tx.auth_info.fee.amount.length > 0)?tx.tx.auth_info.fee.amount.map((fee,i) => {
                                     return <span className="text-nowrap" key={i}> {(new Coin(parseFloat(fee.amount), fee.denom)).toString(6)} </span>
-                                }):<span><T>transactions.noFee</T></span>}</Col>
+                                }):<span><T>1token</T></span>}</Col>
                                 <Col md={4} className="label"><T>transactions.gasUsedWanted</T></Col>
                                 <Col md={8} className="value">{numbro(tx.tx_response.gas_used).format("0,0")} / {numbro(tx.tx_response.gas_wanted).format("0,0")}</Col>
                                 <Col md={4} className="label"><T>transactions.memo</T></Col>

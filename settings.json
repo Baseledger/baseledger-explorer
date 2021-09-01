@@ -42,7 +42,8 @@
     },
     "coingeckoId": "cosmos",
     "networks": "https://gist.githubusercontent.com/kwunyeung/8be4598c77c61e497dfc7220a678b3ee/raw/bd-networks.json",
-    "banners": false
+    "banners": false,
+    "genesisTime": "2021-08-24T21:30:46.437887974Z"
   },
   "remote": {
     "rpc": "http://genesis.peachtree.baseledger.provide.network:1337",

@@ -70,35 +70,35 @@ getValidatorUptime = async (validatorSet) => {
 
     // get validator uptime
   
-    let url = `${API}/cosmos/slashing/v1beta1/params`;
-    let response = HTTP.get(url);
-    let slashingParams = JSON.parse(response.content)
+    // let url = `${API}/slashing/v1beta1/params`;
+    // let response = HTTP.get(url);
+    // let slashingParams = JSON.parse(response.content)
 
-    Chain.upsert({chainId:Meteor.settings.public.chainId}, {$set:{"slashing":slashingParams}});
+    // Chain.upsert({chainId:Meteor.settings.public.chainId}, {$set:{"slashing":slashingParams}});
 
-    for(let key in validatorSet){
-        // console.log("Getting uptime validator: %o", validatorSet[key]);
-        try {
-            // console.log("=== Signing Info ===: %o", signingInfo)
+    // for(let key in validatorSet){
+    //     // console.log("Getting uptime validator: %o", validatorSet[key]);
+    //     try {
+    //         // console.log("=== Signing Info ===: %o", signingInfo)
 
-            url = `${API}/cosmos/slashing/v1beta1/signing_infos/${validatorSet[key].bech32ValConsAddress}`
-            let response = HTTP.get(url);
-            let signingInfo = JSON.parse(response.content).val_signing_info;
-            if (signingInfo){
-                let valData = validatorSet[key]
-                valData.tombstoned = signingInfo.tombstoned;
-                valData.jailed_until = signingInfo.jailed_until;
-                valData.index_offset = parseInt(signingInfo.index_offset);
-                valData.start_height = parseInt(signingInfo.start_height);
-                valData.uptime = (slashingParams.params.signed_blocks_window - parseInt(signingInfo.missed_blocks_counter))/slashingParams.params.signed_blocks_window * 100;
-                Validators.upsert({bech32ValConsAddress:validatorSet[key].bech32ValConsAddress}, {$set:valData})
-            }
-        }
-        catch(e){
-            console.log(url);
-            console.log("Getting signing info of %o: %o", validatorSet[key].bech32ValConsAddress, e);
-        }
-    }
+    //         url = `${API}/slashing/v1beta1/signing_infos/${validatorSet[key].bech32ValConsAddress}`
+    //         let response = HTTP.get(url);
+    //         let signingInfo = JSON.parse(response.content).val_signing_info;
+    //         if (signingInfo){
+    //             let valData = validatorSet[key]
+    //             valData.tombstoned = signingInfo.tombstoned;
+    //             valData.jailed_until = signingInfo.jailed_until;
+    //             valData.index_offset = parseInt(signingInfo.index_offset);
+    //             valData.start_height = parseInt(signingInfo.start_height);
+    //             valData.uptime = (slashingParams.params.signed_blocks_window - parseInt(signingInfo.missed_blocks_counter))/slashingParams.params.signed_blocks_window * 100;
+    //             Validators.upsert({bech32ValConsAddress:validatorSet[key].bech32ValConsAddress}, {$set:valData})
+    //         }
+    //     }
+    //     catch(e){
+    //         console.log(url);
+    //         console.log("Getting signing info of %o: %o", validatorSet[key].bech32ValConsAddress, e);
+    //     }
+    // }
 }
 
 calculateVPDist = async (analyticsData, blockData) => {
@@ -163,6 +163,7 @@ Meteor.methods({
     'blocks.averageBlockTime'(address){
         this.unblock();
         let blocks = Blockscon.find({proposerAddress:address}).fetch();
+        console.log("BLOCKS", blocks)
         let heights = blocks.map((block) => {
             return block.height;
         });
@@ -218,39 +219,42 @@ Meteor.methods({
             let validatorSet = [];
             // get latest validator candidate information
 
-            let url = API + '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=200&pagination.count_total=true';
+            let url = API + `/validators?height=${until}&page=1&per_page=10`;
 
             try{
                 let response = HTTP.get(url);
-                let result = JSON.parse(response.content).validators;
-                result.forEach((validator) => validatorSet[validator.consensus_pubkey.key] = validator);
+                let result = JSON.parse(response.content).result.validators;
+                result.forEach((validator) => {
+                    validator.status = parseInt(validator.voting_power) > 0 ? 'BOND_STATUS_BONDED' : 'BOND_STATUS_UNBONDED'
+                    validatorSet[validator.pub_key.value] = validator
+                });
             }
             catch(e){
                 console.log(url);
                 console.log(e);
             }
 
-            try{
-                url = API + '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDING&pagination.limit=200&pagination.count_total=true';
-                let response = HTTP.get(url);
-                let result = JSON.parse(response.content).validators;
-                result.forEach((validator) => validatorSet[validator.consensus_pubkey.key] = validator);
-            }
-            catch(e){
-                console.log(url);
-                console.log(e);
-            }
+            // try{
+            //     url = API + '/validators?status=BOND_STATUS_UNBONDING&pagination.limit=200&pagination.count_total=true';
+            //     let response = HTTP.get(url);
+            //     let result = JSON.parse(response.content).validators;
+            //     result.forEach((validator) => validatorSet[validator.consensus_pubkey.key] = validator);
+            // }
+            // catch(e){
+            //     console.log(url);
+            //     console.log(e);
+            // }
 
-            try{
-                url = API + '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED&pagination.limit=200&pagination.count_total=true';
-                let response = HTTP.get(url);
-                let result = JSON.parse(response.content).validators;
-                result.forEach((validator) => validatorSet[validator.consensus_pubkey.key] = validator);
-            }
-            catch(e){
-                console.log(url);
-                console.log(e);
-            }
+            // try{
+            //     url = API + '/validators?status=BOND_STATUS_UNBONDED&pagination.limit=200&pagination.count_total=true';
+            //     let response = HTTP.get(url);
+            //     let result = JSON.parse(response.content).validators;
+            //     result.forEach((validator) => validatorSet[validator.consensus_pubkey.key] = validator);
+            // }
+            // catch(e){
+            //     console.log(url);
+            //     console.log(e);
+            // }
 
             // console.log("validaotor set: %o", validatorSet);
             let totalValidators = Object.keys(validatorSet).length;
@@ -264,7 +268,7 @@ Meteor.methods({
                 this.unblock();
                 // let url = RPC+'/block?height=' + height;
 
-                url = `${API}/blocks/${height}`;
+                url = `${API}/block?height=${height}`;
                 let analyticsData = {};
 
                 const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
@@ -281,7 +285,7 @@ Meteor.methods({
 
                     // store height, hash, numtransaction and time in db
                     let blockData = {};
-                    let block = JSON.parse(response.content);
+                    let block = JSON.parse(response.content).result;
                     blockData.height = height;
                     blockData.hash = block.block_id.hash;
                     blockData.transNum = block.block.data.txs?block.block.data.txs.length:0;
@@ -315,10 +319,10 @@ Meteor.methods({
                     }
 
                     // save double sign evidences
-                    if (block.block.evidence.evidenceList){
+                    if (block.block.evidence.evidence){
                         Evidences.insert({
                             height: height,
-                            evidence: block.block.evidence.evidenceList
+                            evidence: block.block.evidence.evidence
                         });
                     }
 
@@ -465,33 +469,30 @@ Meteor.methods({
                     for (v in validatorSet){
                         let valData = validatorSet[v];
 
-                        valData.tokens = parseInt(valData.tokens);
-                        valData.unbonding_height = parseInt(valData.unbonding_height)
+                        // valData.tokens = parseInt(valData.tokens);
+                        // valData.unbonding_height = parseInt(valData.unbonding_height)
 
-                        let valExist = Validators.findOne({"consensus_pubkey.key":v});
-                            
-                        // console.log(valData);
+                        let valExist = Validators.findOne({"pub_key.value":v});
 
                         // console.log("===== voting power ======: %o", valData)
                         analyticsData.voting_power += valData.voting_power
 
                         // console.log(analyticsData.voting_power);
-                        if (!valExist && valData.consensus_pubkey){
+                        if (!valExist && valData.pub_key){
                                 
                             // let val = getValidatorFromConsensusKey(validators, v);
                             // get the validator hex address and other bech32 addresses.
 
-                            valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
+                            // valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
 
                             // console.log("get hex address")
                             // valData.address = getAddress(valData.consensusPubkey);
                             console.log("get bech32 consensus pubkey");
-                            valData.bech32ConsensusPubKey = Meteor.call('pubkeyToBech32', valData.consensus_pubkey, Meteor.settings.public.bech32PrefixConsPub);
-
+                            valData.bech32ConsensusPubKey = Meteor.call('pubkeyToBech32', valData.pub_key, Meteor.settings.public.bech32PrefixConsPub);
                             
-                            valData.address = Meteor.call('getAddressFromPubkey', valData.consensus_pubkey);
+                            valData.address = Meteor.call('getAddressFromPubkey', valData.pub_key);
                             valData.bech32ValConsAddress = Meteor.call('hexToBech32', valData.address, Meteor.settings.public.bech32PrefixConsAddr);
-
+                            
                             // assign back to the validator set so that we can use it to find the uptime
 
                             if (validatorSet[v])
@@ -501,18 +502,18 @@ Meteor.methods({
                             // First time adding validator to the database.
                             // Fetch profile picture from Keybase
 
-                            if (valData.description && valData.description.identity){
-                                try{
-                                    valData.profile_url = getValidatorProfileUrl(valData.description.identity)
-                                }
-                                catch (e){
-                                    console.log("Error fetching keybase: %o", e)
-                                }
-                            }
+                            // if (valData.description && valData.description.identity){
+                            //     try{
+                            //         valData.profile_url = getValidatorProfileUrl(valData.description.identity)
+                            //     }
+                            //     catch (e){
+                            //         console.log("Error fetching keybase: %o", e)
+                            //     }
+                            // }
                                     
 
-                            valData.accpub = Meteor.call('pubkeyToBech32', valData.consensus_pubkey, Meteor.settings.public.bech32PrefixAccPub);
-                            valData.operator_pubkey = Meteor.call('pubkeyToBech32', valData.consensus_pubkey, Meteor.settings.public.bech32PrefixValPub);
+                            valData.accpub = Meteor.call('pubkeyToBech32', valData.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                            valData.operator_pubkey = Meteor.call('pubkeyToBech32', valData.pub_key, Meteor.settings.public.bech32PrefixValPub);
 
                             // insert first power change history 
 
@@ -523,6 +524,7 @@ Meteor.methods({
                             console.log("Validator not found. Insert first VP change record.")
 
                             // console.log("first voting power: %o", valData.voting_power);
+
                             bulkVPHistory.insert({
                                 address: valData.address,
                                 prev_voting_power: 0,
@@ -538,7 +540,7 @@ Meteor.methods({
                             valData.address = valExist.address;
 
                             // assign to valData for getting self delegation
-                            valData.delegator_address = valExist.delegator_address;
+                            // valData.delegator_address = valExist.delegator_address;
                             valData.bech32ValConsAddress = valExist.bech32ValConsAddress;
 
                             if (validatorSet[v]){
@@ -598,22 +600,22 @@ Meteor.methods({
                         if ((height == curr+1) || (height == Meteor.settings.params.startHeight+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
                             if ((height == Meteor.settings.params.startHeight+1) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){    
                                 if (valData.status == 'BOND_STATUS_BONDED'){
-                                    url = `${API}/cosmos/staking/v1beta1/validators/${valData.operator_address}/delegations/${valData.delegator_address}`
-                                    try{
-                                        console.log("Getting self delegation");
+                                    // url = `${API}/validators/${valData.operator_address}/delegations/${valData.delegator_address}`
+                                    // try{
+                                    //     console.log("Getting self delegation");
         
-                                        let response = HTTP.get(url);
-                                        let selfDelegation = JSON.parse(response.content).delegation_response;
+                                    //     let response = HTTP.get(url);
+                                    //     let selfDelegation = JSON.parse(response.content).delegation_response;
         
-                                        valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
+                                    //     valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
         
-                                    }
-                                    catch(e){
-                                        console.log(url);
-                                        console.log("Getting self delegation: %o", e);
-                                        valData.self_delegation = 0;
+                                    // }
+                                    // catch(e){
+                                    //     console.log(url);
+                                    //     console.log("Getting self delegation: %o", e);
+                                    //     valData.self_delegation = 0;
                                             
-                                    }
+                                    // }
                                 }
                             }
 
@@ -630,8 +632,6 @@ Meteor.methods({
                         console.log("Update validator uptime.")
                         getValidatorUptime(validatorSet)
                     }
-
-
 
                     let endFindValidatorsNameTime = new Date();
                     console.log("Get validators name time: "+((endFindValidatorsNameTime-startFindValidatorsNameTime)/1000)+"seconds.");

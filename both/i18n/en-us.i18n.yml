@@ -34,7 +34,7 @@ common:
     txOutOfGasMessage: 'Unable to broadcast the transaction due to insufficient balance. Ensure you have enough funds available on your account to cover the transaction fees.'
     estimatedGasPrice: 'Estimated gas price is <b>{$gasPrice}</b>.'
 navbar:
-    siteName: 'BIG DIPPER'
+    siteName: 'Baseledger'
     version: '-'
     validators: 'Validators'
     blocks: 'Blocks'
@@ -144,7 +144,7 @@ transactions:
     txHash: 'Tx Hash'
     valid: 'Valid'
     fee: 'Fee'
-    noFee: 'No fee'
+    noFee: '1token'
     gasUsedWanted: 'Gas (used / wanted)'
     noTxFound: 'No such transaction found.'
     noValidatorTxsFound: 'No transaction related to this validator was found.'

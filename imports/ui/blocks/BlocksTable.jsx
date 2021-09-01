@@ -39,6 +39,8 @@ export default class BlocksTable extends Component {
     
     trackScrolling = () => {
         const wrappedElement = document.getElementById('block-table');
+        // wrapped element is not present on home page, so this will always throw console errors
+        if (!wrappedElement) return;
         if (this.isBottom(wrappedElement)) {
             // console.log('header bottom reached');
             document.removeEventListener('scroll', this.trackScrolling);
@@ -80,7 +82,7 @@ export default class BlocksTable extends Component {
 
         return !this.props.homepage ? <div>
             <Helmet>
-                <title>Latest Blocks | Big Dipper</title>
+                <title>Latest Blocks | Baseledger</title>
                 <meta name="description" content="Latest blocks committed by validators" />
             </Helmet>
             <Row>

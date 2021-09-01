@@ -17,8 +17,7 @@ Meteor.methods({
         let url = RPC+'/dump_consensus_state';
         try{
             let response = HTTP.get(url);
-            let consensus = JSON.parse(response.content);
-            consensus = consensus.result;
+            let consensus = JSON.parse(response.content).result;
             let height = consensus.round_state.height;
             let round = consensus.round_state.round;
             let step = consensus.round_state.step;
@@ -43,9 +42,9 @@ Meteor.methods({
         this.unblock();
         let url = "";
         try{
-            url = API + '/blocks/latest';
+            url = API + '/block';
             let response = HTTP.get(url);
-            let latestBlock = JSON.parse(response.content);
+            let latestBlock = JSON.parse(response.content).result;
 
             let chain = {};
             chain.chainId = latestBlock.block.header.chain_id;
@@ -82,14 +81,14 @@ Meteor.methods({
             chain.activeVotingPower = activeVP;
 
             // update staking params
-            try {
-                url = API + '/cosmos/staking/v1beta1/params';
-                response = HTTP.get(url);
-                chain.staking = JSON.parse(response.content);
-            }
-            catch(e){
-                console.log(e);
-            }
+            // try {
+            //     url = API + '/staking/params';
+            //     response = HTTP.get(url);
+            //     chain.staking = JSON.parse(response.content);
+            // }
+            // catch(e){
+            //     console.log(e);
+            // }
 
             // Get chain states
             if (parseInt(chain.latestBlockHeight) > 0){
@@ -97,122 +96,122 @@ Meteor.methods({
                 chainStates.height = parseInt(chain.latestBlockHeight);
                 chainStates.time = new Date(chain.latestBlockTime);
 
-                try{
-                    url = API + '/cosmos/staking/v1beta1/pool';
-                    let response = HTTP.get(url);
-                    let bonding = JSON.parse(response.content).pool;
-                    chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
-                    chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
-                }
-                catch(e){
-                    console.log(e);
-                }
+                // try{
+                //     url = API + '/staking/pool';
+                //     let response = HTTP.get(url);
+                //     let bonding = JSON.parse(response.content).pool;
+                //     chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
+                //     chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
+                // }
+                // catch(e){
+                //     console.log(e);
+                // }
 
-                if ( Coin.StakingCoin.denom ) {
-                    if (Meteor.settings.public.modules.bank){
-                        try{
-                            url = API + '/cosmos/bank/v1beta1/supply/' + Coin.StakingCoin.denom;
-                            let response = HTTP.get(url);
-                            let supply = JSON.parse(response.content);
-                            chainStates.totalSupply = parseInt(supply.amount.amount);
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
+                // if ( Coin.StakingCoin.denom ) {
+                //     if (Meteor.settings.public.modules.bank){
+                //         try{
+                //             url = API + '/bank/supply/' + Coin.StakingCoin.denom;
+                //             let response = HTTP.get(url);
+                //             let supply = JSON.parse(response.content);
+                //             chainStates.totalSupply = parseInt(supply.amount.amount);
+                //         }
+                //         catch(e){
+                //             console.log(e);
+                //         }
 
-                        // update bank params
-                        try {
-                            url = API + '/cosmos/bank/v1beta1/params';
-                            response = HTTP.get(url);
-                            chain.bank = JSON.parse(response.content);
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
+                //         // update bank params
+                //         try {
+                //             url = API + '/bank/params';
+                //             response = HTTP.get(url);
+                //             chain.bank = JSON.parse(response.content);
+                //         }
+                //         catch(e){
+                //             console.log(e);
+                //         }
 
-                    }
+                //     }
 
-                    if (Meteor.settings.public.modules.distribution){
-                        try {
-                            url = API + '/cosmos/distribution/v1beta1/community_pool';
-                            let response = HTTP.get(url);
-                            let pool = JSON.parse(response.content).pool;
-                            if (pool && pool.length > 0){
-                                chainStates.communityPool = [];
-                                pool.forEach((amount) => {
-                                    chainStates.communityPool.push({
-                                        denom: amount.denom,
-                                        amount: parseFloat(amount.amount)
-                                    })
-                                })
-                            }
-                        }
-                        catch (e){
-                            console.log(e)
-                        }
+                    // if (Meteor.settings.public.modules.distribution){
+                    //     try {
+                    //         url = API + '/distribution/community_pool';
+                    //         let response = HTTP.get(url);
+                    //         let pool = JSON.parse(response.content).pool;
+                    //         if (pool && pool.length > 0){
+                    //             chainStates.communityPool = [];
+                    //             pool.forEach((amount) => {
+                    //                 chainStates.communityPool.push({
+                    //                     denom: amount.denom,
+                    //                     amount: parseFloat(amount.amount)
+                    //                 })
+                    //             })
+                    //         }
+                    //     }
+                    //     catch (e){
+                    //         console.log(e)
+                    //     }
 
-                        // update distribution params
-                        try {
-                            url = API + '/cosmos/distribution/v1beta1/params';
-                            response = HTTP.get(url);
-                            chain.distribution = JSON.parse(response.content);
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
-                    }
+                    //     // update distribution params
+                    //     try {
+                    //         url = API + '/distribution/params';
+                    //         response = HTTP.get(url);
+                    //         chain.distribution = JSON.parse(response.content);
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
+                    // }
 
-                    if (Meteor.settings.public.modules.minting){
-                        try{
-                            url = API + '/cosmos/mint/v1beta1/inflation';
-                            let response = HTTP.get(url);
-                            let inflation = JSON.parse(response.content).inflation;
-                            // response = HTTP.get(url);
-                            // let inflation = JSON.parse(response.content).result;
-                            if (inflation){
-                                chainStates.inflation = parseFloat(inflation)
-                            }
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
+                    // if (Meteor.settings.public.modules.minting){
+                    //     try{
+                    //         url = API + '/mint/inflation';
+                    //         let response = HTTP.get(url);
+                    //         let inflation = JSON.parse(response.content).inflation;
+                    //         // response = HTTP.get(url);
+                    //         // let inflation = JSON.parse(response.content).result;
+                    //         if (inflation){
+                    //             chainStates.inflation = parseFloat(inflation)
+                    //         }
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
 
-                        try{
-                            url = API + '/cosmos/mint/v1beta1/annual_provisions';
-                            let response = HTTP.get(url);
-                            let provisions = JSON.parse(response.content).annual_provisions;
-                            console.log(provisions)
-                            if (provisions){
-                                chainStates.annualProvisions = parseFloat(provisions)
-                            }
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
+                    //     try{
+                    //         url = API + '/mint/annual_provisions';
+                    //         let response = HTTP.get(url);
+                    //         let provisions = JSON.parse(response.content).annual_provisions;
+                    //         console.log(provisions)
+                    //         if (provisions){
+                    //             chainStates.annualProvisions = parseFloat(provisions)
+                    //         }
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
 
-                        // update mint params
-                        try {
-                            url = API + '/cosmos/mint/v1beta1/params';
-                            response = HTTP.get(url);
-                            chain.mint = JSON.parse(response.content);
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
-                    }
+                    //     // update mint params
+                    //     try {
+                    //         url = API + '/mint/params';
+                    //         response = HTTP.get(url);
+                    //         chain.mint = JSON.parse(response.content);
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
+                    // }
 
-                    if (Meteor.settings.public.modules.gov){
-                        // update gov params
-                        try {
-                            url = API + '/cosmos/gov/v1beta1/params/tallying';
-                            response = HTTP.get(url);
-                            chain.gov = JSON.parse(response.content);
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
-                    }
-                }
+                    // if (Meteor.settings.public.modules.gov){
+                    //     // update gov params
+                    //     try {
+                    //         url = API + '/gov/params/tallying';
+                    //         response = HTTP.get(url);
+                    //         chain.gov = JSON.parse(response.content);
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
+                    // }
+                // }
 
                 ChainStates.insert(chainStates);
             }

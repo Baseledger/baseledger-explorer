@@ -19,7 +19,7 @@ export const TransactionRow = (props) => {
     let tx = props.tx;
     let homepage = window?.location?.pathname === '/' ? true : false;
 
-    return <SentryBoundary><Row className={(tx.code)?"tx-info w-40 invalid":"tx-info w-40"}>
+    return <SentryBoundary><Row className={(tx.tx_response.code)?"tx-info w-40 invalid":"tx-info w-40"}>
         <Col xs={12} lg={homepage ? 5 : 7} className="activity" >{(tx?.tx?.body?.messages && tx?.tx?.body?.messages.length >0)?tx?.tx?.body?.messages.map((msg,i) => {
             return <Card body key={i}><Activities msg={msg} invalid={(!!tx.tx_response.code)} events={(tx.tx_response.logs&&tx.tx_response.logs[i])?tx.tx_response.logs[i].events:null} /></Card>
         }):''}</Col>
@@ -32,16 +32,16 @@ export const TransactionRow = (props) => {
             </UncontrolledPopover>
         </span>:""}</Col>
         {(!props.blockList) ? <Col xs={4} md={2} lg={!homepage ? 1 : 2}><i className="fas fa-database d-lg-none"></i> <Link to={"/blocks/"+tx.height}>{numbro(tx.height).format("0,0")}</Link></Col>:''}
-        <Col xs={(!props.blockList)?2:4} md={1}>{(!tx.code)?<TxIcon valid />:<TxIcon />}</Col> 
+        <Col xs={(!props.blockList)?2:4} md={1}>{(!tx.tx_response.code)?<TxIcon valid />:<TxIcon />}</Col> 
         {!homepage ? <Col xs={(!props.blockList)?6:8} md={(!props.blockList)?9:4} lg={2} className="fee"><i className="material-icons d-lg-none">monetization_on</i> {(tx?.tx?.auth_info?.fee?.amount.length > 0)?tx?.tx?.auth_info?.fee?.amount.map((fee,i) => {
             return <span className="text-nowrap" key={i}>{(new Coin(parseFloat(fee.amount), (fee)?fee.denom:null)).toString(6)}</span>
-        }) : <span>No fee</span>}</Col> : <Col xs={(!props.blockList) ? 6 : 8} md={(!props.blockList) ? 9 : 4} lg={2} className="fee d-sm-none"><i className="material-icons d-lg-none">monetization_on</i> {(tx?.tx?.auth_info?.fee?.amount.length > 0) ? tx?.tx?.auth_info?.fee?.amount.map((fee, i) => {
+        }) : <span>1token</span>}</Col> : <Col xs={(!props.blockList) ? 6 : 8} md={(!props.blockList) ? 9 : 4} lg={2} className="fee d-sm-none"><i className="material-icons d-lg-none">monetization_on</i> {(tx?.tx?.auth_info?.fee?.amount.length > 0) ? tx?.tx?.auth_info?.fee?.amount.map((fee, i) => {
             return <span className="text-nowrap" key={i}>{(new Coin(parseFloat(fee.amount), (fee) ? fee.denom : null)).toString(6)}</span>
-        }) : <span>No fee</span>}</Col> } 
-        {(tx.code)?<Col xs={{size:12, order:"last"}} className="error">
+        }) : <span>1token</span>}</Col> } 
+        {(tx.tx_response.code)?<Col xs={{size:12, order:"last"}} className="error">
             <Alert color="danger">
                 <CosmosErrors
-                    code={tx.code}
+                    code={tx.tx_response.code}
                     codespace={tx.codespace}
                     log={tx.raw_log}
                 />

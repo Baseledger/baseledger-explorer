@@ -148,7 +148,7 @@ export default class Validator extends Component{
                             votingPower={history.voting_power}
                             time={history.block_time}
                             height={history.height}
-                            address={this.props.validator.operator_address}
+                            address={this.props.validator.address}
                         />
                     })
                 })
@@ -168,13 +168,13 @@ export default class Validator extends Component{
 
     renderShareLink() {
         let validator = this.props.validator;
-        let primaryLink = `/validator/${validator.operator_address}`
-        let otherLinks = [
-            {label: 'Delegate', url: `${primaryLink}/delegate`},
-            {label: 'Transfer', url: `/account/${validator.delegatorAddress}/send`}
-        ]
+        let primaryLink = `/validator/${validator.address}`
+        // let otherLinks = [
+        //     {label: 'Delegate', url: `${primaryLink}/delegate`},
+        //     {label: 'Transfer', url: `/account/${validator.delegatorAddress}/send`}
+        // ]
 
-        return <LinkIcon link={primaryLink} otherLinks={otherLinks} />
+        return <LinkIcon link={primaryLink} otherLinks={[]} />
     }
 
     render() {
@@ -191,7 +191,7 @@ export default class Validator extends Component{
 
                 return <Row className="validator-details">
                     <Helmet>
-                        <title>{ moniker } - {Meteor.settings.public.chainName} Validator | Big Dipper</title>
+                        <title>{ moniker } - {Meteor.settings.public.chainName} Validator | Baseledger</title>
                         <meta name="description" content={details} />
                     </Helmet>
                     <Col xs={12}>
@@ -201,20 +201,21 @@ export default class Validator extends Component{
                         <Card body className="text-center">
                             <div className="shareLink d-flex align-self-end">{this.renderShareLink()}</div>
                             <div className="validator-avatar"><Avatar moniker={moniker} profileUrl={this.props.validator.profile_url} address={this.props.validator.address} list={false}/></div>
-                            <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
+                            <div className="text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
                             <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
                             <div className="details"><Markdown markup={ details } /></div>
                             <div className="website"></div>
                         </Card>
                         <Card>
-                            <div className="card-header"><T>validators.uptime</T> <Link className="float-right" to={"/validator/"+this.props.validator.address+"/missed/blocks"}><T>common.more</T>...</Link></div>
+                            <div className="card-header"><T>validators.uptime</T></div>
                             <SentryBoundary>
                                 <CardBody>
-                                    <Row>
+                                    <div className='moniker flip-clock-wrapper'>--</div>
+                                    {/* <Row>
                                         <Col xs={8} className="label"><T numBlocks={Meteor.settings.public.slashingWindow}>validators.lastNumBlocks</T></Col>
-                                        <Col xs={4} className="value text-right">{this.props.validator.uptime}%</Col>
+                                        <Col xs={4} className="value text-right">{this.props.validator.uptime?'this.props.validator.uptime%':'--'}</Col>
                                         <Col md={12} className="blocks-list">{this.state.records}</Col>
-                                    </Row>
+                                    </Row> */}
                                 </CardBody>
                             </SentryBoundary>
                         </Card>
@@ -226,15 +227,15 @@ export default class Validator extends Component{
                                 <Row>
                                     <Col xs={12}><StatusBadge bondingStatus={this.props.validator.status} jailed={this.props.validator.jailed} /></Col>
                                     <Col sm={4} className="label"><T>validators.operatorAddress</T></Col>
-                                    <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
+                                    <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address ?? '--'}</Col>
                                     <Col sm={4} className="label"><T>validators.selfDelegationAddress</T></Col>
-                                    <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}><Link to={"/account/"+this.props.validator.delegator_address}>{this.props.validator.delegator_address}</Link></Col>
+                                    <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address ?? '--'}>{this.props.validator.delegator_address ?? '--'}</Col>
                                     <Col sm={4} className="label"><T>validators.commissionRate</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.update_time})</small></Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.rate*100).format('0.00')+"%":'--'}</Col>
                                     <Col sm={4} className="label"><T>validators.maxRate</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.max_rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.max_rate*100).format('0.00')+"%":'--'}</Col>
                                     <Col sm={4} className="label"><T>validators.maxChangeRate</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.max_change_rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.max_change_rate*100).format('0.00')+"%":'--'}</Col>
                                 </Row>
                             </CardBody>
                         </Card>
@@ -245,17 +246,17 @@ export default class Validator extends Component{
                                     currentDelegation={this.state.currentUserDelegation}
                                     history={this.props.history} stakingParams={this.props.chainStatus.staking?this.props.chainStatus.staking.params:null}/>:''}
                                 <Row>
-                                    {this.props.validator.tokens?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(Math.floor(this.props.validator.tokens/Meteor.settings.public.powerReduction)).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.tokens/Meteor.settings.public.powerReduction/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
+                                    {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(Math.floor(this.props.validator.voting_power)).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
                                     <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.tokens/Meteor.settings.public.powerReduction*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Coin.StakingCoin.displayName})</small></span>:'N/A'}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.tokens/Meteor.settings.public.powerReduction*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Coin.StakingCoin.displayName})</small></span>:'--'}</Col>
                                     <Col sm={4} className="label"><T>validators.proposerPriority</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.proposer_priority?numbro(this.props.validator.proposer_priority).format('0,0'):'N/A'}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.proposer_priority}</Col>
                                     <Col sm={4} className="label"><T>validators.delegatorShares</T></Col>
-                                    <Col sm={8} className="value">{numbro(this.props.validator.delegator_shares).format('0,0.00')}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.delegator_shares?numbro(this.props.validator.delegator_shares).format('0,0.00'):'--'}</Col>
                                     {(this.state.currentUserDelegation)?<Col sm={4} className="label"><T>validators.userDelegateShares</T></Col>:''}
                                     {(this.state.currentUserDelegation)?<Col sm={8} className="value">{numbro(this.state.currentUserDelegation.delegation.shares).format('0,0.00')}</Col>:''}
                                     <Col sm={4} className="label"><T>validators.tokens</T></Col>
-                                    <Col sm={8} className="value">{numbro(this.props.validator.tokens).format('0,0.00')}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.tokens?numbro(this.props.validator.tokens).format('0,0.00'):"--"}</Col>
                                     {(this.props.validator.jailed)?<Col xs={12} >
                                         <Row><Col md={4} className="label"><T>validators.unbondingHeight</T></Col>
                                             <Col md={8} className="value">{numbro(this.props.validator.unbonding_height).format('0,0')}</Col>
@@ -269,13 +270,13 @@ export default class Validator extends Component{
                         </Card>
                         <Nav pills>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address} active={!(this.props.location.pathname.match(/(delegations|transactions)/gm))}><T>validators.powerChange</T></NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.address} active={!(this.props.location.pathname.match(/(delegations|transactions)/gm))}><T>validators.powerChange</T></NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm) && this.props.location.pathname.match(/delegations/gm).length > 0)}><T>validators.delegations</T></NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.address+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm) && this.props.location.pathname.match(/delegations/gm).length > 0)} disabled={true}><T>validators.delegations</T></NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm) && this.props.location.pathname.match(/transactions/gm).length > 0)}><T>validators.transactions</T></NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.address+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm) && this.props.location.pathname.match(/transactions/gm).length > 0)}><T>validators.transactions</T></NavLink>
                             </NavItem>
                         </Nav>
                         <Switch>
